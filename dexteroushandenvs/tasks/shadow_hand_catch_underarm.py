@@ -450,6 +450,23 @@ class ShadowHandCatchUnderarm(BaseTask):
         self.object_indices = to_torch(self.object_indices, dtype=torch.long, device=self.device)
         self.goal_object_indices = to_torch(self.goal_object_indices, dtype=torch.long, device=self.device)
 
+    def compute_cost(self):
+        actions = self.actions.clone()
+
+        self.cost_buf = torch.zeros(
+            self.num_envs, device=self.device, dtype=torch.float)
+
+        # if actions[:, :20] < -0.2:
+        #     self.cost = 1.0
+        # elif actions[:, :20] > 0.07:
+        #     self.cost = 1.0
+        self.cost_buf = torch.where(actions[:, 4] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 4] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+
+        # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
+        # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
+        return self.cost_buf
+
     def compute_reward(self, actions):
         self.rew_buf[:], self.reset_buf[:], self.reset_goal_buf[:], self.progress_buf[:], self.successes[:], self.consecutive_successes[:] = compute_hand_reward(
             self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.successes, self.consecutive_successes,

@@ -1,9 +1,9 @@
 # if given, will override the device setting in gym. 
 env: 
   env_name: "shadow_hand_re_orientation"
-  numEnvs: 64
+  numEnvs: 512
   envSpacing: 0.75
-  episodeLength: 75
+  episodeLength: 600
   enableDebugVis: False
   aggregateMode: 1
 
@@ -25,15 +25,14 @@ env:
   distRewardScale: -10
   transition_scale: 0.05
   orientation_scale: 0.5
-
   rotRewardScale: 1.0
   rotEps: 0.1
   actionPenaltyScale: -0.0002
   reachGoalBonus: 250
-  fallDistance: 0.65
+  fallDistance: 0.24
   fallPenalty: 0.0
 
-  objectType: "egg" # can be block, egg or pen
+  objectType: "block" # can be block, egg or pen
   observationType: "full_state" 
   asymmetric_observations: False
   successTolerance: 0.1
