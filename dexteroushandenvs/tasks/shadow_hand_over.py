@@ -446,13 +446,13 @@ class ShadowHandOver(BaseTask):
 
     def compute_cost(self, actions):
         cost = 0.0
-        if self.shadow_hand_dof_lower_limits[1] < -0.2:
+        if self.actions[1, :20] < -0.2:
             cost = 1.0
-        elif self.shadow_hand_dof_upper_limits[1] > 0.07:
+        elif self.actions[1, :20] > 0.07:
             cost = 1.0
 
-        #cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
-        print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
+        # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
+        # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
         return cost
 
     def compute_reward(self, actions):
