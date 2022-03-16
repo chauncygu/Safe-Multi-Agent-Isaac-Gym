@@ -246,7 +246,7 @@ class HATRPO():
                                       loss_grad.data, 
                                       nsteps=10)
         
-        loss = loss.data.cpu().numpy()
+        loss = loss.detach()
 
         params = self.flat_params(self.policy.actor)
         fvp = self.fisher_vector_product(self.policy.actor,
@@ -267,7 +267,7 @@ class HATRPO():
                             self.device)
         self.update_model(old_actor, params)
         expected_improve = (loss_grad * full_step).sum(0, keepdim=True)
-        expected_improve = expected_improve.data.cpu().numpy()
+        expected_improve = expected_improve.data.detach()
         
 
         # Backtracking line search
@@ -292,7 +292,7 @@ class HATRPO():
             else:
                 new_loss = torch.sum(ratio * factor_batch * adv_targ, dim=-1, keepdim=True).mean()
 
-            new_loss = new_loss.data.cpu().numpy()
+            new_loss = new_loss.detach()
             loss_improve = new_loss - loss
             
             kl = self.kl_divergence(obs_batch, 
@@ -330,10 +330,10 @@ class HATRPO():
             advantages = buffer.returns[:-1] - self.value_normalizer.denormalize(buffer.value_preds[:-1])
         else:
             advantages = buffer.returns[:-1] - buffer.value_preds[:-1]
-        advantages_copy = advantages.copy()
-        advantages_copy[buffer.active_masks[:-1] == 0.0] = np.nan
-        mean_advantages = np.nanmean(advantages_copy)
-        std_advantages = np.nanstd(advantages_copy)
+        advantages_copy = advantages.clone()
+        # advantages_copy[buffer.active_masks[:-1] == 0.0] = np.nan
+        mean_advantages = advantages_copy.mean()
+        std_advantages = advantages_copy.std()
         advantages = (advantages - mean_advantages) / (std_advantages + 1e-5)
         
 

@@ -15,7 +15,7 @@ import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 
 from itertools import chain
-from dexteroushandenvs.algorithms.algorithms.utils.separated_buffer import SeparatedReplayBuffer
+from algorithms.algorithms.utils.separated_buffer_macpo import SeparatedReplayBuffer
 from utils.util import update_linear_schedule
 
 def _t2n(x):
@@ -130,7 +130,8 @@ class Runner:
 
             for step in range(self.episode_length):
                 # Sample actions
-                values, actions, action_log_probs, rnn_states, rnn_states_critic = self.collect(step)
+                values, actions, action_log_probs, rnn_states, rnn_states_critic, cost_preds, \
+                rnn_states_cost = self.collect(step)
 
                 # Obser reward and next obs
                 obs, share_obs, rewards, costs, dones, infos, _ = self.envs.step(actions)
@@ -149,11 +150,11 @@ class Runner:
                         train_episode_rewards[:, t] = 0
                         done_episodes_costs.append(train_episode_costs[:, t].clone())
                         train_episode_costs[:, t] = 0
-
+                
                 done_episodes_costs_aver = train_episode_costs.mean()
-                data = obs, share_obs, rewards, dones, infos, \
+                data = obs, share_obs, rewards, costs, dones, infos, \
                        values, actions, action_log_probs, \
-                       rnn_states, rnn_states_critic
+                       rnn_states, rnn_states_critic, cost_preds, rnn_states_cost, done_episodes_costs_aver
 
                 # insert data into buffer
                 self.insert(data)
@@ -172,8 +173,8 @@ class Runner:
             if episode % self.log_interval == 0:
                 end = time.time()
                 print("\nAlgo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n"
-                      .format(self.algorithm_name,
-                              self.experiment_name,
+                      .format(self.algorithm_name, 
+                              self.experiment_name, 
                               episode, 
                               episodes, 
                               total_num_steps, 
@@ -194,6 +195,11 @@ class Runner:
             if episode % self.eval_interval == 0 and self.use_eval:
                 self.eval(total_num_steps)
 
+    def return_aver_cost(self, aver_episode_costs):
+        for agent_id in range(self.num_agents):
+            self.buffer[agent_id].return_aver_insert(aver_episode_costs)
+
+
     def warmup(self):
         # reset env
         obs, share_obs, _ = self.envs.reset()
@@ -212,31 +218,40 @@ class Runner:
         action_log_prob_collector = []
         rnn_state_collector = []
         rnn_state_critic_collector = []
+        cost_preds_collector = []
+        rnn_states_cost_collector = []
+
         for agent_id in range(self.num_agents):
             self.trainer[agent_id].prep_rollout()
-            value, action, action_log_prob, rnn_state, rnn_state_critic \
+            value, action, action_log_prob, rnn_state, rnn_state_critic, cost_pred, rnn_state_cost \
                 = self.trainer[agent_id].policy.get_actions(self.buffer[agent_id].share_obs[step],
                                                             self.buffer[agent_id].obs[step],
                                                             self.buffer[agent_id].rnn_states[step],
                                                             self.buffer[agent_id].rnn_states_critic[step],
-                                                            self.buffer[agent_id].masks[step])
+                                                            self.buffer[agent_id].masks[step],
+                                                            rnn_states_cost=self.buffer[agent_id].rnn_states_cost[step])
             value_collector.append(value.detach())
             action_collector.append(action.detach())
             action_log_prob_collector.append(action_log_prob.detach())
             rnn_state_collector.append(rnn_state.detach())
             rnn_state_critic_collector.append(rnn_state_critic.detach())
+            cost_preds_collector.append(cost_pred.detach())
+            rnn_states_cost_collector.append(rnn_state_cost.detach())
         # [self.envs, agents, dim]
         values = torch.transpose(torch.stack(value_collector), 1, 0)
         actions = torch.transpose(torch.stack(action_collector), 1, 0)
         action_log_probs = torch.transpose(torch.stack(action_log_prob_collector), 1, 0)
         rnn_states = torch.transpose(torch.stack(rnn_state_collector), 1, 0)
         rnn_states_critic = torch.transpose(torch.stack(rnn_state_critic_collector), 1, 0)
+        cost_preds = torch.transpose(torch.stack(cost_preds_collector), 1, 0)
+        rnn_states_cost = torch.transpose(torch.stack(rnn_states_cost_collector), 1, 0)
 
-        return values, actions, action_log_probs, rnn_states, rnn_states_critic
+        return values, actions, action_log_probs, rnn_states, rnn_states_critic, cost_preds, rnn_states_cost
 
-    def insert(self, data):
-        obs, share_obs, rewards, dones, infos, \
-        values, actions, action_log_probs, rnn_states, rnn_states_critic = data
+    def insert(self, data, aver_episode_costs=0):
+        aver_episode_costs = aver_episode_costs
+        obs, share_obs, rewards, costs, dones, infos, \
+        values, actions, action_log_probs, rnn_states, rnn_states_critic, cost_preds, rnn_states_cost, done_episodes_costs_aver  = data
 
         dones_env = torch.all(dones, axis=1)
 
@@ -244,6 +259,8 @@ class Runner:
             (dones_env == True).sum(), self.num_agents, self.recurrent_N, self.hidden_size, device=self.device)
         rnn_states_critic[dones_env == True] = torch.zeros(
             (dones_env == True).sum(), self.num_agents, *self.buffer[0].rnn_states_critic.shape[2:], device=self.device)
+        rnn_states_cost[dones_env == True] = torch.zeros(
+            ((dones_env == True).sum(), self.num_agents, *self.buffer[0].rnn_states_cost.shape[2:]), device=self.device)
 
         masks = torch.ones(self.n_rollout_threads, self.num_agents, 1, device=self.device)
         masks[dones_env == True] = torch.zeros((dones_env == True).sum(), self.num_agents, 1, device=self.device)
@@ -261,7 +278,9 @@ class Runner:
                                          rnn_states_critic[:, agent_id], actions[:, agent_id],
                                          action_log_probs[:, agent_id],
                                          values[:, agent_id], rewards[:, agent_id], masks[:, agent_id], None,
-                                         active_masks[:, agent_id], None)
+                                         active_masks[:, agent_id], None, costs=costs[:, agent_id],
+                                         cost_preds=cost_preds[:, agent_id],
+                                         rnn_states_cost=rnn_states_cost[:, agent_id], done_episodes_costs_aver=done_episodes_costs_aver, aver_episode_costs=aver_episode_costs)
 
     def log_train(self, train_infos, total_num_steps):
         print("average_step_rewards is {}.".format(np.mean(self.buffer[0].rewards)))
@@ -294,6 +313,15 @@ class Runner:
                                                             self.buffer[agent_id].masks[:-1].reshape(-1, *self.buffer[agent_id].masks.shape[2:]),
                                                             available_actions,
                                                             self.buffer[agent_id].active_masks[:-1].reshape(-1, *self.buffer[agent_id].active_masks.shape[2:]))
+            if self.algorithm_name == "macpo":
+                old_actions_logprob, _, _, _ = self.trainer[agent_id].policy.actor.evaluate_actions(
+                    self.buffer[agent_id].obs[:-1].reshape(-1, *self.buffer[agent_id].obs.shape[2:]),
+                    self.buffer[agent_id].rnn_states[0:1].reshape(-1, *self.buffer[agent_id].rnn_states.shape[2:]),
+                    self.buffer[agent_id].actions.reshape(-1, *self.buffer[agent_id].actions.shape[2:]),
+                    self.buffer[agent_id].masks[:-1].reshape(-1, *self.buffer[agent_id].masks.shape[2:]),
+                    available_actions,
+                    self.buffer[agent_id].active_masks[:-1].reshape(-1, *self.buffer[agent_id].active_masks.shape[2:]))
+            
             else:
                 old_actions_logprob, _ =self.trainer[agent_id].policy.actor.evaluate_actions(self.buffer[agent_id].obs[:-1].reshape(-1, *self.buffer[agent_id].obs.shape[2:]),
                                                             self.buffer[agent_id].rnn_states[0:1].reshape(-1, *self.buffer[agent_id].rnn_states.shape[2:]),
@@ -310,6 +338,15 @@ class Runner:
                                                             self.buffer[agent_id].masks[:-1].reshape(-1, *self.buffer[agent_id].masks.shape[2:]),
                                                             available_actions,
                                                             self.buffer[agent_id].active_masks[:-1].reshape(-1, *self.buffer[agent_id].active_masks.shape[2:]))
+            if self.algorithm_name == "macpo":
+                new_actions_logprob, dist_entropy, action_mu, action_std = self.trainer[agent_id].policy.actor.evaluate_actions(
+                    self.buffer[agent_id].obs[:-1].reshape(-1, *self.buffer[agent_id].obs.shape[2:]),
+                    self.buffer[agent_id].rnn_states[0:1].reshape(-1, *self.buffer[agent_id].rnn_states.shape[2:]),
+                    self.buffer[agent_id].actions.reshape(-1, *self.buffer[agent_id].actions.shape[2:]),
+                    self.buffer[agent_id].masks[:-1].reshape(-1, *self.buffer[agent_id].masks.shape[2:]),
+                    available_actions,
+                    self.buffer[agent_id].active_masks[:-1].reshape(-1, *self.buffer[agent_id].active_masks.shape[2:]))
+
             else:
                 new_actions_logprob, _ =self.trainer[agent_id].policy.actor.evaluate_actions(self.buffer[agent_id].obs[:-1].reshape(-1, *self.buffer[agent_id].obs.shape[2:]),
                                                             self.buffer[agent_id].rnn_states[0:1].reshape(-1, *self.buffer[agent_id].rnn_states.shape[2:]),
@@ -427,3 +464,9 @@ class Runner:
                                                                 self.buffer[agent_id].masks[-1])
             next_value = next_value.detach()
             self.buffer[agent_id].compute_returns(next_value, self.trainer[agent_id].value_normalizer)
+
+            next_costs = self.trainer[agent_id].policy.get_cost_values(self.buffer[agent_id].share_obs[-1],
+                                                                       self.buffer[agent_id].rnn_states_cost[-1],
+                                                                       self.buffer[agent_id].masks[-1])
+            next_costs = next_costs.detach()
+            self.buffer[agent_id].compute_cost_returns(next_costs, self.trainer[agent_id].value_normalizer)

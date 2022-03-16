@@ -161,13 +161,14 @@ class MultiVecTaskPython(MultiVecTask):
         hand_obs.append(torch.cat([obs_buf[:, :self.num_hand_obs], obs_buf[:, 2*self.num_hand_obs:]], dim=1))
         hand_obs.append(torch.cat([obs_buf[:, self.num_hand_obs:2*self.num_hand_obs], obs_buf[:, 2*self.num_hand_obs:]], dim=1))
         state_buf = torch.clamp(self.task.obs_buf, -self.clip_obs, self.clip_obs)
-
         rewards = self.task.rew_buf.unsqueeze(-1).to(self.rl_device)
+        costs = self.task.compute_cost().unsqueeze(-1).to(self.rl_device)
         dones = self.task.reset_buf.to(self.rl_device)
 
         sub_agent_obs = []
         agent_state = []
         sub_agent_reward = []
+        sub_agent_cost = []
         sub_agent_done = []
         sub_agent_info = []
         for i in range(len(self.agent_index[0] + self.agent_index[1])):
@@ -178,16 +179,18 @@ class MultiVecTaskPython(MultiVecTask):
 
             agent_state.append(state_buf)
             sub_agent_reward.append(rewards)
+            sub_agent_cost.append(costs)
             sub_agent_done.append(dones)
             sub_agent_info.append(torch.Tensor(0))
 
         obs_all = torch.transpose(torch.stack(sub_agent_obs), 1, 0)
         state_all = torch.transpose(torch.stack(agent_state), 1, 0)
         reward_all = torch.transpose(torch.stack(sub_agent_reward), 1, 0)
+        costs_all = torch.transpose(torch.stack(sub_agent_cost), 1, 0)
         done_all = torch.transpose(torch.stack(sub_agent_done), 1, 0)
         info_all = torch.stack(sub_agent_info)
 
-        return obs_all, state_all, reward_all, done_all, info_all, None
+        return obs_all, state_all, reward_all, costs_all, done_all, info_all, None
 
     def reset(self):
         actions = 0.01 * (1 - 2 * torch.rand([self.task.num_envs, self.task.num_actions * 2], dtype=torch.float32, device=self.rl_device))

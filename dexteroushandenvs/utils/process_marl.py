@@ -19,6 +19,14 @@ def process_MultiAgentRL(args,env, config, model_dir=""):
                     config=config,
                     model_dir=model_dir
                     )
+    if args.algo in ["macpo"]:
+        # safe rl
+        from algorithms.algorithms.runner_macpo import Runner
+        marl = Runner(vec_env=env,
+                    config=config,
+                    model_dir=model_dir
+                    )
+
     elif args.algo == 'maddpg':
         # off policy marl
         from algorithms.maddpg.runner import Runner

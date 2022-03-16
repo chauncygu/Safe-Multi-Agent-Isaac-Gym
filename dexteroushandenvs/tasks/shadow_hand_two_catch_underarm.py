@@ -715,7 +715,7 @@ class ShadowHandTwoCatchUnderarm(BaseTask):
 
         self.gym.set_dof_position_target_tensor_indexed(self.sim,
                                                         gymtorch.unwrap_tensor(self.prev_targets),
-                                                        gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))  
+                                                        gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))  
 
          
         self.hand_positions[all_hand_indices.to(torch.long), :] = self.saved_root_tensor[all_hand_indices.to(torch.long), 0:3]
@@ -725,7 +725,7 @@ class ShadowHandTwoCatchUnderarm(BaseTask):
 
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
-                                              gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))
+                                              gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))
                                               
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_state_tensor),

@@ -384,10 +384,6 @@ class ShadowHandOverOverarm(BaseTask):
             if self.aggregate_mode >= 1:
                 self.gym.begin_aggregate(env_ptr, max_agg_bodies, max_agg_shapes, True)
 
-            # add table
-            table_handle = self.gym.create_actor(env_ptr, table_asset, table_pose, "table", i, 0, 0)
-            self.gym.set_rigid_body_texture(env_ptr, table_handle, 0, gymapi.MESH_VISUAL, table_texture_handle)
-
             # add hand - collision filter = -1 to use asset collision filters set in mjcf loader
             shadow_hand_actor = self.gym.create_actor(env_ptr, shadow_hand_asset, shadow_hand_start_pose, "hand", i, -1, 0)
             shadow_hand_another_actor = self.gym.create_actor(env_ptr, shadow_hand_another_asset, shadow_another_hand_start_pose, "another_hand", i, -1, 0)
@@ -445,6 +441,10 @@ class ShadowHandOverOverarm(BaseTask):
             goal_object_idx = self.gym.get_actor_index(env_ptr, goal_handle, gymapi.DOMAIN_SIM)
             self.goal_object_indices.append(goal_object_idx)
 
+            # add table
+            table_handle = self.gym.create_actor(env_ptr, table_asset, table_pose, "table", i, 0, 0)
+            self.gym.set_rigid_body_texture(env_ptr, table_handle, 0, gymapi.MESH_VISUAL, table_texture_handle)
+
             if self.object_type != "block":
                 self.gym.set_rigid_body_color(
                     env_ptr, object_handle, 0, gymapi.MESH_VISUAL, gymapi.Vec3(0.6, 0.72, 0.98))
@@ -474,6 +474,23 @@ class ShadowHandOverOverarm(BaseTask):
 
         self.object_indices = to_torch(self.object_indices, dtype=torch.long, device=self.device)
         self.goal_object_indices = to_torch(self.goal_object_indices, dtype=torch.long, device=self.device)
+
+    def compute_cost(self):
+        actions = self.actions.clone()
+
+        self.cost_buf = torch.zeros(
+            self.num_envs, device=self.device, dtype=torch.float)
+
+        # if actions[:, :20] < -0.2:
+        #     self.cost = 1.0
+        # elif actions[:, :20] > 0.07:
+        #     self.cost = 1.0
+        self.cost_buf = torch.where(actions[:, 1] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 1] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+
+        # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
+        # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
+        return self.cost_buf
 
     def compute_reward(self, actions):
         self.rew_buf[:], self.reset_buf[:], self.reset_goal_buf[:], self.progress_buf[:], self.successes[:], self.consecutive_successes[:] = compute_hand_reward(
@@ -663,7 +680,7 @@ class ShadowHandOverOverarm(BaseTask):
 
         self.gym.set_dof_position_target_tensor_indexed(self.sim,
                                                         gymtorch.unwrap_tensor(self.prev_targets),
-                                                        gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))  
+                                                        gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))  
 
          
         self.hand_positions[all_hand_indices.to(torch.long), :] = self.saved_root_tensor[all_hand_indices.to(torch.long), 0:3]
@@ -673,7 +690,7 @@ class ShadowHandOverOverarm(BaseTask):
 
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
-                                              gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))
+                                              gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))
                                               
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_state_tensor),
@@ -720,10 +737,10 @@ class ShadowHandOverOverarm(BaseTask):
             position_offsets = self.actions[:, 0:6] * self.dt * self.transition_scale
             angle_offsets = self.actions[:, 26:32] * self.dt * self.orientation_scale
             
-            self.apply_forces[:, 2, :] = position_offsets[:, :3] * 100000
-            self.apply_forces[:, 2 + 26, :] = position_offsets[:, 3:] * 100000
-            self.apply_torque[:, 2, :] = angle_offsets[:, :3] * 1000
-            self.apply_torque[:, 2 + 26, :] = angle_offsets[:, 3:] * 1000           
+            self.apply_forces[:, 1, :] = position_offsets[:, :3] * 100000
+            self.apply_forces[:, 1 + 26, :] = position_offsets[:, 3:] * 100000
+            self.apply_torque[:, 1, :] = angle_offsets[:, :3] * 1000
+            self.apply_torque[:, 1 + 26, :] = angle_offsets[:, 3:] * 1000           
 
             self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(self.apply_forces), gymtorch.unwrap_tensor(self.apply_torque), gymapi.ENV_SPACE)
 

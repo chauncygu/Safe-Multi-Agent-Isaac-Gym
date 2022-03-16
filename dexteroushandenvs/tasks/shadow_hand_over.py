@@ -444,16 +444,22 @@ class ShadowHandOver(BaseTask):
         self.object_indices = to_torch(self.object_indices, dtype=torch.long, device=self.device)
         self.goal_object_indices = to_torch(self.goal_object_indices, dtype=torch.long, device=self.device)
 
-    def compute_cost(self, actions):
-        cost = 0.0
-        if self.actions[1, :20] < -0.2:
-            cost = 1.0
-        elif self.actions[1, :20] > 0.07:
-            cost = 1.0
+    def compute_cost(self):
+        actions = self.actions.clone()
+
+        self.cost_buf = torch.zeros(
+            self.num_envs, device=self.device, dtype=torch.float)
+
+        # if actions[:, :20] < -0.2:
+        #     self.cost = 1.0
+        # elif actions[:, :20] > 0.07:
+        #     self.cost = 1.0
+        self.cost_buf = torch.where(actions[:, 1] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 1] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
 
         # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
         # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
-        return cost
+        return self.cost_buf
 
     def compute_reward(self, actions):
         self.rew_buf[:], self.reset_buf[:], self.reset_goal_buf[:], self.progress_buf[:], self.successes[:], self.consecutive_successes[:] = compute_hand_reward(
@@ -632,14 +638,14 @@ class ShadowHandOver(BaseTask):
 
         self.gym.set_dof_position_target_tensor_indexed(self.sim,
                                                         gymtorch.unwrap_tensor(self.prev_targets),
-                                                        gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))  
+                                                        gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))  
 
         all_indices = torch.unique(torch.cat([all_hand_indices,
                                                  object_indices]).to(torch.int32))
 
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
-                                              gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))
+                                              gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))
 
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_state_tensor),

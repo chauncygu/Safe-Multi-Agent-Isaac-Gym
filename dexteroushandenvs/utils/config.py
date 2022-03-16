@@ -303,7 +303,7 @@ def get_args(benchmark=False, use_rlg_config=False):
     if args.cfg_env == "Base":
         args.cfg_env = cfg_env
 
-    if args.algo not in ["maddpg", "happo", "mappo", "hatrpo","ippo","ppo","sac","td3","ddpg","trpo"]:
+    if args.algo not in ["maddpg", "happo", "mappo", "hatrpo","ippo","ppo","sac","td3","ddpg","trpo","macpo"]:
         warn_algorithm_name()
 
     return args

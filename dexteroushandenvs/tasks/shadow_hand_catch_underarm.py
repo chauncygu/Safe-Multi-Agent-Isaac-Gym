@@ -644,7 +644,7 @@ class ShadowHandCatchUnderarm(BaseTask):
 
         self.gym.set_dof_position_target_tensor_indexed(self.sim,
                                                         gymtorch.unwrap_tensor(self.prev_targets),
-                                                        gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))  
+                                                        gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))  
 
          
         self.hand_positions[all_hand_indices.to(torch.long), :] = self.saved_root_tensor[all_hand_indices.to(torch.long), 0:3]
@@ -654,7 +654,7 @@ class ShadowHandCatchUnderarm(BaseTask):
 
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
-                                              gymtorch.unwrap_tensor(all_hand_indices), len(env_ids))
+                                              gymtorch.unwrap_tensor(all_hand_indices), len(all_hand_indices))
                                               
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_state_tensor),
@@ -700,10 +700,10 @@ class ShadowHandCatchUnderarm(BaseTask):
             position_offsets = self.actions[:, 0:6] * self.dt * self.transition_scale
             angle_offsets = self.actions[:, 26:32] * self.dt * self.orientation_scale
 
-            self.apply_forces[:, 2, :] = position_offsets[:, :3] * 100000
-            self.apply_forces[:, 2 + 26, :] = position_offsets[:, 3:] * 100000
-            self.apply_torque[:, 2, :] = angle_offsets[:, :3] * 1000
-            self.apply_torque[:, 2 + 26, :] = angle_offsets[:, 3:] * 1000           
+            self.apply_forces[:, 1, :] = position_offsets[:, :3] * 100000
+            self.apply_forces[:, 1 + 26, :] = position_offsets[:, 3:] * 100000
+            self.apply_torque[:, 1, :] = angle_offsets[:, :3] * 1000
+            self.apply_torque[:, 1 + 26, :] = angle_offsets[:, 3:] * 1000           
 
             self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(self.apply_forces), gymtorch.unwrap_tensor(self.apply_torque), gymapi.ENV_SPACE)
 

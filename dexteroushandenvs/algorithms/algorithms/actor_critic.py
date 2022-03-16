@@ -105,6 +105,18 @@ class Actor(nn.Module):
                                                                     else None)
 
             return action_log_probs, dist_entropy, action_mu, action_std, all_probs
+
+        if self.config["algorithm_name"]== "macpo":
+            action_log_probs, dist_entropy, action_mu, action_std, _ = self.act.evaluate_actions_trpo(actor_features,
+                                                                                                   action,
+                                                                                                   available_actions,
+                                                                                                   active_masks=
+                                                                                                   active_masks if self._use_policy_active_masks
+                                                                                                   else None)
+            # print("action_log_probs", action_log_probs)
+            # print("action_std", action_std)
+            return action_log_probs, dist_entropy, action_mu, action_std
+
         else:
             action_log_probs, dist_entropy = self.act.evaluate_actions(actor_features,
                                                                     action, available_actions,
