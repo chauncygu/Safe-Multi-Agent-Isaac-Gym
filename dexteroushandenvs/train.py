@@ -22,7 +22,7 @@ def train():
     agent_index = [[[0, 1, 2, 3, 4, 5]],
                    [[0, 1, 2, 3, 4, 5]]]
 
-    if args.algo in ["mappo", "happo", "hatrpo","maddpg","ippo", "macpo"]: 
+    if args.algo in ["mappo", "happo", "hatrpo","maddpg","ippo", "macpo", "happolag"]: 
         # maddpg exists a bug now 
         args.task_type = "MultiAgent"
 

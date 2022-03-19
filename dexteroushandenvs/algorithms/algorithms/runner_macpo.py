@@ -83,6 +83,9 @@ class Runner:
         if self.algorithm_name == "macpo":
             from algorithms.algorithms.macpo_trainer import MACPO as TrainAlgo
             from algorithms.algorithms.macpo_policy import MACPO_Policy as Policy
+        if self.algorithm_name == "happolag":
+            from algorithms.algorithms.happolag_trainer import R_MAPPO_Lagr as TrainAlgo
+            from algorithms.algorithms.happolag_policy import MACPPOPolicy as Policy
 
         self.policy = []
         for agent_id in range(self.num_agents):

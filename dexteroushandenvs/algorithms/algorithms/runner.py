@@ -83,6 +83,9 @@ class Runner:
         if self.algorithm_name == "macpo":
             from algorithms.algorithms.macpo_trainer import MACPO as TrainAlgo
             from algorithms.algorithms.macpo_policy import MACPO_Policy as Policy
+        if self.algorithm_name == "ippo":
+            from algorithms.algorithms.ippo_trainer import IPPO as TrainAlgo
+            from algorithms.algorithms.ippo_policy import IPPO_Policy as Policy
 
         self.policy = []
         for agent_id in range(self.num_agents):
