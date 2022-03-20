@@ -144,12 +144,12 @@ class MultiVecTaskPython(MultiVecTask):
 
     def step(self, actions):
 
-        # a_hand_actions = actions[0]
-        # for i in range(1, len(actions)):
-        #     a_hand_actions = torch.hstack((a_hand_actions, actions[i]))
+        a_hand_actions = actions[0]
+        for i in range(1, len(actions)):
+            a_hand_actions = torch.hstack((a_hand_actions, actions[i]))
 
-        # actions = a_hand_actions
-        actions = torch.flatten(actions, start_dim=1, end_dim=-1)
+        actions = a_hand_actions
+        # actions = torch.flatten(actions, start_dim=1, end_dim=-1)
 
         actions_tensor = torch.clamp(actions, -self.clip_actions, self.clip_actions)
 

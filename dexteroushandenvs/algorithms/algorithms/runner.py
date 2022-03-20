@@ -230,12 +230,12 @@ class Runner:
             rnn_state_critic_collector.append(rnn_state_critic.detach())
         # [self.envs, agents, dim]
         values = torch.transpose(torch.stack(value_collector), 1, 0)
-        actions = torch.transpose(torch.stack(action_collector), 1, 0)
-        action_log_probs = torch.transpose(torch.stack(action_log_prob_collector), 1, 0)
+        # actions = torch.transpose(torch.stack(action_collector), 1, 0)
+        # action_log_probs = torch.transpose(torch.stack(action_log_prob_collector), 1, 0)
         rnn_states = torch.transpose(torch.stack(rnn_state_collector), 1, 0)
         rnn_states_critic = torch.transpose(torch.stack(rnn_state_critic_collector), 1, 0)
 
-        return values, actions, action_log_probs, rnn_states, rnn_states_critic
+        return values, action_collector, action_log_prob_collector, rnn_states, rnn_states_critic
 
     def insert(self, data):
         obs, share_obs, rewards, dones, infos, \
@@ -261,8 +261,8 @@ class Runner:
 
         for agent_id in range(self.num_agents):
             self.buffer[agent_id].insert(share_obs[:, agent_id], obs[:, agent_id], rnn_states[:, agent_id],
-                                         rnn_states_critic[:, agent_id], actions[:, agent_id],
-                                         action_log_probs[:, agent_id],
+                                         rnn_states_critic[:, agent_id], actions[agent_id],
+                                         action_log_probs[agent_id],
                                          values[:, agent_id], rewards[:, agent_id], masks[:, agent_id], None,
                                          active_masks[:, agent_id], None)
 

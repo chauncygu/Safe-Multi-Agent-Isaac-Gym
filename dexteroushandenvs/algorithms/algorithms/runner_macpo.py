@@ -242,14 +242,14 @@ class Runner:
             rnn_states_cost_collector.append(rnn_state_cost.detach())
         # [self.envs, agents, dim]
         values = torch.transpose(torch.stack(value_collector), 1, 0)
-        actions = torch.transpose(torch.stack(action_collector), 1, 0)
-        action_log_probs = torch.transpose(torch.stack(action_log_prob_collector), 1, 0)
+        # actions = torch.transpose(torch.stack(action_collector), 1, 0)
+        # action_log_probs = torch.transpose(torch.stack(action_log_prob_collector), 1, 0)
         rnn_states = torch.transpose(torch.stack(rnn_state_collector), 1, 0)
         rnn_states_critic = torch.transpose(torch.stack(rnn_state_critic_collector), 1, 0)
         cost_preds = torch.transpose(torch.stack(cost_preds_collector), 1, 0)
         rnn_states_cost = torch.transpose(torch.stack(rnn_states_cost_collector), 1, 0)
 
-        return values, actions, action_log_probs, rnn_states, rnn_states_critic, cost_preds, rnn_states_cost
+        return values, action_collector, action_log_prob_collector, rnn_states, rnn_states_critic, cost_preds, rnn_states_cost
 
     def insert(self, data, aver_episode_costs=0):
         aver_episode_costs = aver_episode_costs
@@ -278,8 +278,8 @@ class Runner:
 
         for agent_id in range(self.num_agents):
             self.buffer[agent_id].insert(share_obs[:, agent_id], obs[:, agent_id], rnn_states[:, agent_id],
-                                         rnn_states_critic[:, agent_id], actions[:, agent_id],
-                                         action_log_probs[:, agent_id],
+                                         rnn_states_critic[:, agent_id], actions[agent_id],
+                                         action_log_probs[agent_id],
                                          values[:, agent_id], rewards[:, agent_id], masks[:, agent_id], None,
                                          active_masks[:, agent_id], None, costs=costs[:, agent_id],
                                          cost_preds=cost_preds[:, agent_id],
