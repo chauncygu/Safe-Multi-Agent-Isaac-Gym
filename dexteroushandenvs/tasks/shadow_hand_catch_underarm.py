@@ -463,6 +463,10 @@ class ShadowHandCatchUnderarm(BaseTask):
         self.cost_buf = torch.where(actions[:, 4] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
         self.cost_buf = torch.where(actions[:, 4] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
 
+        self.cost_buf = torch.where(actions[:, 4 + 24] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 4 + 24] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+
+
         # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
         # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
         return self.cost_buf
