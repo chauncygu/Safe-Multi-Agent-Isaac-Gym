@@ -86,7 +86,10 @@ class Runner:
         if self.algorithm_name == "happolag":
             from algorithms.algorithms.happolag_trainer import R_MAPPO_Lagr as TrainAlgo
             from algorithms.algorithms.happolag_policy import MACPPOPolicy as Policy
-
+        if self.algorithm_name == "ippo":
+            from algorithms.algorithms.mappo_trainer import IPPO as TrainAlgo
+            from algorithms.algorithms.mappo_policy import IPPO_Policy as Policy
+        print(self.algorithm_name)
         self.policy = []
         for agent_id in range(self.num_agents):
             share_observation_space = self.envs.share_observation_space[agent_id] if self.use_centralized_V else self.envs.observation_space[agent_id]
