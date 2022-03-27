@@ -43,7 +43,7 @@ class MACPO():
         self.huber_delta = config["huber_delta"]
         self.episode_length = config["episode_length"]
 
-        self.kl_threshold = config["episode_length"]
+        self.kl_threshold = config["kl_threshold"]
         self.safety_bound = config["safety_bound"]
         self.ls_step = config["ls_step"]
         self.accept_ratio = config["accept_ratio"]
