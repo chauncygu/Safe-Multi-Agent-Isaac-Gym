@@ -339,6 +339,8 @@ class MACPO():
 
         # todo:reward-g
         ratio = torch.exp(action_log_probs - old_action_log_probs_batch)
+        ratio = torch.prod(ratio, dim=-1, keepdim=True)
+
         if self._use_policy_active_masks:
             reward_loss = (torch.sum(ratio * factor_batch * adv_targ, dim=-1, keepdim=True) *
                            active_masks_batch).sum() / active_masks_batch.sum()
@@ -501,6 +503,8 @@ class MACPO():
                 rnn_states_cost_batch)
 
             ratio = torch.exp(action_log_probs - old_action_log_probs_batch)
+            ratio = torch.prod(ratio, dim=-1, keepdim=True)
+
             if self._use_policy_active_masks:
                 new_reward_loss = (torch.sum(ratio * factor_batch * adv_targ, dim=-1, keepdim=True) *
                                    active_masks_batch).sum() / active_masks_batch.sum()

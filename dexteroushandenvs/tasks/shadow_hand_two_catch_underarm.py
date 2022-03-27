@@ -768,12 +768,10 @@ class ShadowHandTwoCatchUnderarm(BaseTask):
             self.cur_targets[:, self.actuated_dof_indices + 24] = tensor_clamp(self.cur_targets[:, self.actuated_dof_indices + 24],
                                                                           self.shadow_hand_dof_lower_limits[self.actuated_dof_indices], self.shadow_hand_dof_upper_limits[self.actuated_dof_indices])
             
-            position_offsets = self.actions[:, 0:6] * self.dt * self.transition_scale
-            angle_offsets = self.actions[:, 26:32] * self.dt * self.orientation_scale
-            self.apply_forces[:, 2, :] = position_offsets[:, :3] * 100000
-            self.apply_forces[:, 2 + 26, :] = position_offsets[:, 3:] * 100000
-            self.apply_torque[:, 2, :] = angle_offsets[:, :3] * 1000
-            self.apply_torque[:, 2 + 26, :] = angle_offsets[:, 3:] * 1000           
+            self.apply_forces[:, 1, :] = self.actions[:, 0:3] * 100000 * self.dt * self.transition_scale
+            self.apply_forces[:, 1 + 26, :] = self.actions[:, 26:29] * 100000 * self.dt * self.transition_scale
+            self.apply_torque[:, 1, :] = self.actions[:, 3:6] * 1000 * self.dt * self.orientation_scale
+            self.apply_torque[:, 1 + 26, :] = self.actions[:, 29:32] * 1000 * self.dt * self.orientation_scale       
 
             self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(self.apply_forces), gymtorch.unwrap_tensor(self.apply_torque), gymapi.ENV_SPACE)
             

@@ -250,6 +250,7 @@ class R_MAPPO_Lagr:
         # todo: lagrangian actor update step
         # actor update
         imp_weights = torch.exp(action_log_probs - old_action_log_probs_batch)
+        imp_weights = torch.prod(imp_weights, dim=-1, keepdim=True)
 
         surr1 = imp_weights * adv_targ_hybrid
         surr2 = torch.clamp(imp_weights, 1.0 - self.clip_param, 1.0 + self.clip_param) * adv_targ_hybrid

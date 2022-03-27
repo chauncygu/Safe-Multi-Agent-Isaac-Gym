@@ -20,11 +20,11 @@ import torch
 def train():
     print("Algorithm: ", args.algo)
     # Agent: 4x3
-    agent_index = [[[0, 1, 2],[ 3, 4, 5]],
-                   [[0, 1, 2],[ 3, 4, 5]]]
+    # agent_index = [[[0, 1, 2],[ 3, 4, 5]],
+    #                [[0, 1, 2],[ 3, 4, 5]]]
     # Agent: 2x6
-    # agent_index = [[[0, 1, 2, 3, 4, 5]],
-    #                [[0, 1, 2, 3, 4, 5]]]
+    agent_index = [[[0, 1, 2, 3, 4, 5]],
+                   [[0, 1, 2, 3, 4, 5]]]
 
     if args.algo in ["mappo", "happo", "hatrpo","maddpg","ippo", "macpo", "happolag"]: 
         # maddpg exists a bug now 

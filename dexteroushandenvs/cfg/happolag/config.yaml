@@ -22,7 +22,7 @@ eval_episodes: 10000
 
 safety_bound: 20
 lagrangian_coef_rate: 1.e-3
-lamda_lagr: 0.78
+lamda_lagr: 0.9
 
 gamma: 0.96
 gae_lambda: 0.95
@@ -50,8 +50,8 @@ use_huber_loss: True
 use_value_active_masks: False
 use_policy_active_masks: False
 
-lr: 5.e-4
-critic_lr: 5.e-4
+lr: 9.e-5
+critic_lr: 5.e-3
 opti_eps: 1.e-5
 weight_decay: 0.0
 
