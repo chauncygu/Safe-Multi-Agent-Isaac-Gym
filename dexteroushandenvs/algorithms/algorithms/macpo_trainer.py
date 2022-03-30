@@ -77,7 +77,7 @@ class MACPO():
         self.attempt_feasible_recovery = attempt_feasible_recovery
         self.attempt_infeasible_recovery = attempt_infeasible_recovery
         self.revert_to_last_safe_point = revert_to_last_safe_point
-        self._max_quad_constraint_val = config["episode_length"]  # delta_bound
+        self._max_quad_constraint_val = config["kl_threshold"]  # delta_bound
         self._max_lin_constraint_val = config["safety_bound"]
         self._backtrack_ratio = _backtrack_ratio
         self._max_backtracks = _max_backtracks
