@@ -74,7 +74,8 @@ class SeparatedReplayBuffer(object):
     def update_factor(self, factor):
         self.factor.copy_(factor)
     def return_aver_insert(self, aver_episode_costs):
-        self.aver_episode_costs = aver_episode_costs.copy()
+        # self.aver_episode_costs = aver_episode_costs.copy()
+        self.aver_episode_costs = aver_episode_costs.clone()
 
     def insert(self, share_obs, obs, rnn_states, rnn_states_critic, actions, action_log_probs,
                value_preds, rewards, masks, bad_masks=None, active_masks=None, available_actions=None, costs=None,
