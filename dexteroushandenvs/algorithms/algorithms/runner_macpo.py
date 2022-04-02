@@ -192,6 +192,7 @@ class Runner:
             if len(done_episodes_rewards) != 0:
                 aver_episode_rewards = torch.stack(done_episodes_rewards).mean()
                 aver_episode_costs = torch.stack(done_episodes_costs).mean()
+                self.return_aver_cost(aver_episode_costs)
                 print("some episodes done, average rewards: {}, average costs: {}".format(aver_episode_rewards, aver_episode_costs))
                 self.writter.add_scalars("train_episode_rewards", {"aver_rewards": aver_episode_rewards},
                                             total_num_steps)
