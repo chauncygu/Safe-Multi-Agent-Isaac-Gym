@@ -2,7 +2,7 @@
 
 ### About this repository
 
-This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/DexterousHands) from PKU MARL research team, Safe MAIG contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described [in the NeurIPS 2021 Datasets and Benchmarks paper](https://openreview.net/forum?id=fgFBtYgJQX_)
+This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/DexterousHands) which is from PKU MARL research team, Safe MAIG contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described [in the NeurIPS 2021 Datasets and Benchmarks paper](https://openreview.net/forum?id=fgFBtYgJQX_)
 
 <!--
 
