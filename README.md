@@ -244,7 +244,7 @@ quat_diff = quat_mul(object_rot, quat_conjugate(target_rot)
 reward = (0.3 - goal_dist - quat_diff)
 ```
 Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-
+<!--
 ### TwoObjectCatch Environments
 <img src="assets/image_folder/sendpix2.jpg" align="middle" width="450" border="1"/>
 
@@ -351,4 +351,4 @@ reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
 Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
 
-
+-->
