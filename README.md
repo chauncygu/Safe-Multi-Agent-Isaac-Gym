@@ -2,7 +2,9 @@
 
 ### About this repository
 
-This repository contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described [in our NeurIPS 2021 Datasets and Benchmarks paper](https://openreview.net/forum?id=fgFBtYgJQX_)
+This repository contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described [in the NeurIPS 2021 Datasets and Benchmarks paper](https://openreview.net/forum?id=fgFBtYgJQX_)
+
+<!--
 
 :star2::star2:**直接点击[这里](#task)查看环境介绍！**:star2::star2:  
 :star::star:**现在每天都会更新，使用之前可以先pull一下防止出现无法运行等bug**:star::star:
@@ -28,6 +30,7 @@ Version 0.0.1: 由于硬件关系，现在只支持Isaac-gym preview release 2�
 3. 暂时推荐使用ShadowHandOver环境进行调试，我们的测试已经证明该环境可以被成功训练，其他环境还暂时没有测试。
 4. 环境的接口可以在`dexteroushandenvs/tasks/base/multi_vec_task.py`找到，里面可以自定义获取所有该环境的信息。 
 5. 由于开发时间还比较短，难免会有许多bug:worried:，欢迎大家找我修改或提出建议:heart_eyes:。
+-->
 
 ## Installation
 
@@ -56,7 +59,7 @@ pip install -e .
 To train your first policy, run this line:
 
 ```bash
-python train.py --task=ShadowHandOver --algo=happo
+python train.py --task=ShadowHandOver --algo=macpo
 ```
 
 ### Select an algorithm
@@ -65,7 +68,7 @@ To select an algorithm, pass `--algo=ppo/mappo/happo/hatrpo`
 as an argument:
 
 ```bash
-python train.py --task=ShadowHandOver --algo=hatrpo
+python train.py --task=ShadowHandOver --algo=macpo
 ``` 
 
 At present, we only support these four algorithms.
@@ -346,6 +349,4 @@ reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
 Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
 
-## Citing
 
-Please cite this work as:
