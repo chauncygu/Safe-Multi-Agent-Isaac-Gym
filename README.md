@@ -6,6 +6,13 @@ This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/
 
 :star2: This repository is under actively development. We appreciate any constructive comments and suggestions. If you have any questions, please feel free to email <gshangd[AT]foxmail.com>.
 
+ <div align=center>
+ <img src="https://github.com/chauncygu/Safe-Multi-Agent-Isaac-Gym/blob/main/docs/safe-multi-agent-isaac-gym.png" width="850"/> 
+ </div>
+<div align=center>
+<center style="color:#000000;text-decoration:underline">Figure.1 Safe multi-agent Isaac Gym environments. Body parts of different colours of robots are controlled by different agents in each pair of hands. Agents jointly learn to manipulate the robot, while avoiding violating the safety constraints. </center>
+ </div>
+
 <!--
 
 :star2::star2:**直接点击[这里](#task)查看环境介绍！**:star2::star2:  
