@@ -200,7 +200,7 @@ dist_rew = goal_dist
 reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
 Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-
+<!--
 ### HandCatchOverarm Environments
 <img src="assets/image_folder/sendpix0.jpg" align="middle" width="450" border="1"/>
 
