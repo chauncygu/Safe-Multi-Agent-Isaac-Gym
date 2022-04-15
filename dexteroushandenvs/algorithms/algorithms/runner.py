@@ -15,7 +15,7 @@ import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 
 from itertools import chain
-from dexteroushandenvs.algorithms.algorithms.utils.separated_buffer import SeparatedReplayBuffer
+from algorithms.algorithms.utils.separated_buffer import SeparatedReplayBuffer
 from utils.util import update_linear_schedule
 
 def _t2n(x):

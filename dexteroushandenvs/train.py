@@ -34,10 +34,8 @@ def train():
 
         runner = process_MultiAgentRL(args,env=env, config=cfg_train, model_dir=args.model_dir)
         
-        if args.model_dir != "":
-            runner.eval(100000)
-        else:
-            runner.run()
+
+        runner.run()
 
     # elif args.algo == "ppo":
     #     task, env = parse_task(args, cfg, cfg_train, sim_params, agent_index)
