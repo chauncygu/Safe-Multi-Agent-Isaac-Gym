@@ -98,28 +98,25 @@ Source code for tasks can be found in `dexteroushandenvs/tasks`.
 
 Until now we only suppose the following environments:
 
-| Environments | ShadowHandOver | ShadowHandCatchUnderarm | ShadowHandCatchUnderarm | ShadowHandCatchUnderarm | ShadowHandCatchAbreast |
+| Environments | ShadowHandOver | ShadowHandCatchUnderarm | ShadowHandTwoCatchUnderarm | ShadowHandCatchAbreast | ShadowHandOver2Underarm |
 |  :----:  | :----:  | :----:  | :----:  | :----:  | :----:  |
-| Description | These environments involve two fixed-position hands. The hand which starts with the object must find a way to hand it over to the second hand. | These environments again have two hands, however now they have some additional degrees of freedom that allows them to translate/rotate their centre of masses within some constrained region. | Similar to the HandCatchUnderArm environments but now the two hands are upright, and so the throwing/catching technique that has to be employed is different. | These environments involve coordination between the two hands so as to throw the two objects between hands (i.e. swapping them). | Similar to the HandCatchUnderArm environments but now the two hands are abreast. |
+| Description | These environments involve two fixed-position hands. The hand which starts with the object must find a way to hand it over to the second hand. | These environments again have two hands, however now they have some additional degrees of freedom that allows them to translate/rotate their centre of masses within some constrained region. | These environments involve coordination between the two hands so as to throw the two objects between hands (i.e. swapping them). | This environment is similar to ShadowHandCatchUnderarm, the difference is that the two hands are changed from relative to side-by-side posture. | This environment is is made up of half ShadowHandCatchUnderarm and half ShadowHandCatchOverarm, the object needs to be thrown from the vertical hand to the palm-up hand |
 | Actions Type | Continuous | Continuous | Continuous | Continuous | Continuous |
-| Agents Num    | 2    | 2    | 2    | 2    | 2    |
-| Action Shape     | (num_envs, 2, 20)    | (num_envs, 2, 26)    | (num_envs, 2, 26)    | (num_envs, 2, 26)    | (num_envs, 2, 26)    |
+| Total Action Num | 40    | 52    | 52    | 52    | 52    |
 | Action Values     | [-1, 1]    | [-1, 1]    | [-1, 1]    | [-1, 1]    | [-1, 1]    |
 | Action Index and Description     | [detail](#action1)    | [detail](#action2)   | [detail](#action3)    | [detail](#action4)    | [detail](#action5)    |
 | Observation Shape     | (num_envs, 2, 211)    | (num_envs, 2, 217)    | (num_envs, 2, 217)    | (num_envs, 2, 217)    | (num_envs, 2, 217)    |
 | Observation Values     | [-5, 5]    | [-5, 5]    | [-5, 5]    | [-5, 5]    | [-5, 5]    |
 | Observation Index and Description     | [detail](#obs1)    | [detail](#obs2)   | [detail](#obs3)    | [detail](#obs4)    | [detail](#obs4)    |
-| State Shape     | (num_envs, 2, 398)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    |
+| State Shape     | (num_envs, 2, 398)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    | (num_envs, 2, 422)    | 
 | State Values     | [-5, 5]    | [-5, 5]    | [-5, 5]    | [-5, 5]    | [-5, 5]    |
 | Rewards     | Rewards is the pose distance between object and goal. You can check out the details [here](#r1)| Rewards is the pose distance between object and goal. You can check out the details [here](#r2)    | Rewards is the pose distance between object and goal. You can check out the details [here](#r3)    | Rewards is the pose distance between two object and  two goal, this means that both objects have to be thrown in order to be swapped over. You can check out the details [here](#r4)    | Rewards is the pose distance between object and goal. You can check out the details [here](#r2)    |
-| Demo     | <img src="assets/image_folder/0.gif" align="middle" width="550" border="1"/>    | <img src="assets/image_folder/1.gif" align="middle" width="140" border="1"/>    | <img src="assets/image_folder/sendpix0.gif" align="middle" width="130" border="1"/>    | <img src="assets/image_folder/absxx-diyx0.gif" align="middle" width="130" border="1"/>    | <img src="assets/image_folder/5.gif" align="middle" width="130" border="1"/>    |
-
+| Demo     | <img src="assets/image_folder/0.gif" align="middle" width="550" border="1"/>    | <img src="assets/image_folder/hand_catch_underarm.gif" align="middle" width="140" border="1"/>    | <img src="assets/image_folder/two_catch.gif" align="middle" width="130" border="1"/>    | <img src="assets/image_folder/1.gif" align="middle" width="130" border="1"/>    | <img src="assets/image_folder/2.gif" align="middle" width="130" border="1"/>    |
 
 
 
 ### HandOver Environments
 <img src="assets/image_folder/0.gif" align="middle" width="450" border="1"/>
-
 
 These environments involve two fixed-position hands. The hand which starts with the object must find a way to hand it over to the second hand. To use the HandOver environment, pass `--task=ShadowHandOver`
 
@@ -139,7 +136,7 @@ These environments involve two fixed-position hands. The hand which starts with 
 | 200 - 206     | goal pose    |
 | 207 - 210     | goal rot - object rot   |
 
-#### Action Space<span id="action1">Action Space</span>
+#### <span id="action1">Action Space</span>
 The shadow hand has 24 joints, 20 actual drive joints and 4 underdrive joints. So our Action is the joint Angle value of the 20 dimensional actuated joint.
 | Index | Description |
 |  ----  | ----  |
@@ -157,15 +154,13 @@ dist_rew = goal_dist
 
 reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
-Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-
 
 ### HandCatchUnderarm Environments
-<img src="assets/image_folder/1.gif" align="middle" width="450" border="1"/>
+<img src="assets/image_folder/hand_catch_underarm.gif" align="middle" width="450" border="1"/>
 
 These environments again have two hands, however now they have some additional degrees of freedom that allows them to translate/rotate their centre of masses within some constrained region. To use the HandCatchUnderarm environment, pass `--task=ShadowHandCatchUnderarm`
 
-#### #### <span id="obs2">Observation Space</span>
+#### <span id="obs2">Observation Space</span>
 
 
 | Index | Description |
@@ -184,7 +179,7 @@ These environments again have two hands, however now they have some additional d
 | 212 - 218     | goal pose    |
 | 219 - 222     | goal rot - object rot   |
 
-#### Action Space<span id="action2">Action Space</span>
+#### <span id="action2">Action Space</span>
 
 Similar to the HandOver environments, except now the bases are not fixed and have translational and rotational degrees of freedom that allow them to move within some range.
 | Index | Description |
@@ -206,14 +201,13 @@ dist_rew = goal_dist
 
 reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
-Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-<!--
-### HandCatchOverarm Environments
-<img src="assets/image_folder/sendpix0.jpg" align="middle" width="450" border="1"/>
 
-Similar to the HandCatchUnderArm environments but now the two hands are upright, and so the throwing/catching technique that has to be employed is different. To use the HandCatchUnderarm environment, pass `--task=ShadowHandCatchOverarm`
+### HandCatchOver2Underarm Environments
+<img src="assets/image_folder/2.gif" align="middle" width="450" border="1"/>
 
-#### #### <span id="obs3">Observation Space</span>
+This environment is is made up of half ShadowHandCatchUnderarm and half ShadowHandCatchOverarm, the object needs to be thrown from the vertical hand to the palm-up hand. To use the HandCatchUnderarm environment, pass `--task=ShadowHandCatchOver2Underarm`
+
+#### <span id="obs3">Observation Space</span>
 
 
 | Index | Description |
@@ -232,7 +226,7 @@ Similar to the HandCatchUnderArm environments but now the two hands are upright,
 | 212 - 218     | goal pose    |
 | 219 - 222     | goal rot - object rot   |
 
-#### Action Space<span id="action3">Action Space</span>
+#### <span id="action3">Action Space</span>
 
 Similar to the HandOver environments, except now the bases are not fixed and have translational and rotational degrees of freedom that allow them to move within some range.
 | Index | Description |
@@ -250,15 +244,13 @@ goal_dist = torch.norm(target_pos - object_pos, p=2, dim=-1)
 quat_diff = quat_mul(object_rot, quat_conjugate(target_rot)
 reward = (0.3 - goal_dist - quat_diff)
 ```
-Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-<!--
+
 ### TwoObjectCatch Environments
-<img src="assets/image_folder/sendpix2.jpg" align="middle" width="450" border="1"/>
+<img src="assets/image_folder/two_catch.gif" align="middle" width="450" border="1"/>
 
 These environments involve coordination between the two hands so as to throw the two objects between hands (i.e. swapping them). This is necessary since each object's goal can only be reached by the other hand. To use the HandCatchUnderarm environment, pass `--task=ShadowHandTwoCatchUnderarm`
 
-#### #### <span id="obs4">Observation Space</span>
-
+#### <span id="obs4">Observation Space</span>
 
 | Index | Description |
 |  :----:  | :----:  |
@@ -281,7 +273,7 @@ These environments involve coordination between the two hands so as to throw the
 | 237 - 243     | goal2 pose    |
 | 244 - 247     | goal2 rot - object2 rot   |
 
-#### Action Space<span id="action4">Action Space</span>
+#### <span id="action4">Action Space</span>
 
 Similar to the HandOver environments, except now the bases are not fixed and have translational and rotational degrees of freedom that allow them to move within some range.
 | Index | Description |
@@ -308,14 +300,13 @@ dist_rew = goal_dist
 
 reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist)) + torch.exp(-0.2*(goal_another_dist * dist_reward_scale + rot_another_dist))
 ```
-Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
 
 ### HandCatchAbreast Environments
 <img src="assets/image_folder/1.gif" align="middle" width="450" border="1"/>
 
-These environments again have two hands, however now they have some additional degrees of freedom that allows them to translate/rotate their centre of masses within some constrained region. To use the HandCatchUnderarm environment, pass `--task=ShadowHandCatchAbreast`
+This environment is similar to ShadowHandCatchUnderarm, the difference is that the two hands are changed from relative to side-by-side posture.. To use the HandCatchAbreast environment, pass `--task=ShadowHandCatchAbreast`
 
-#### #### <span id="obs5">Observation Space</span>
+#### <span id="obs5">Observation Space</span>
 
 
 | Index | Description |
@@ -334,7 +325,7 @@ These environments again have two hands, however now they have some additional d
 | 212 - 218     | goal pose    |
 | 219 - 222     | goal rot - object rot   |
 
-#### Action Space<span id="action5">Action Space</span>
+#### <span id="action5">Action Space</span>
 
 Similar to the HandOver environments, except now the bases are not fixed and have translational and rotational degrees of freedom that allow them to move within some range.
 | Index | Description |
@@ -356,6 +347,3 @@ dist_rew = goal_dist
 
 reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist))
 ```
-Object receives a large (250) bonus when it reaches goal. When the ball drops, it will reset the environment, but will not receive a penalty.
-
--->
