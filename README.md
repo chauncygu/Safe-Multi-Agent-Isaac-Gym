@@ -116,7 +116,7 @@ Until now we only suppose the following environments:
 
 
 ### HandOver Environments
-<img src="assets/image_folder/0.gif" align="middle" width="450" border="1"/>
+<img src="assets/image_folder/0v1.gif" align="middle" width="450" border="1"/>
 
 These environments involve two fixed-position hands. The hand which starts with the object must find a way to hand it over to the second hand. To use the HandOver environment, pass `--task=ShadowHandOver`
 
@@ -302,7 +302,7 @@ reward = torch.exp(-0.2*(dist_rew * dist_reward_scale + rot_dist)) + torch.exp(-
 ```
 
 ### HandCatchAbreast Environments
-<img src="assets/image_folder/1.gif" align="middle" width="450" border="1"/>
+<img src="assets/image_folder/1v1.gif" align="middle" width="450" border="1"/>
 
 This environment is similar to ShadowHandCatchUnderarm, the difference is that the two hands are changed from relative to side-by-side posture.. To use the HandCatchAbreast environment, pass `--task=ShadowHandCatchAbreast`
 
