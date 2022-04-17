@@ -6,12 +6,16 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 from tasks.shadow_hand_over import ShadowHandOver
-from tasks.shadow_hand_catch_overarm import ShadowHandCatchOverarm
 from tasks.shadow_hand_catch_underarm import ShadowHandCatchUnderarm
 from tasks.shadow_hand_two_catch_underarm import ShadowHandTwoCatchUnderarm
 from tasks.shadow_hand_catch_abreast import ShadowHandCatchAbreast
-from tasks.shadow_hand_re_orientation import ShadowHandReOrientation
-from tasks.shadow_hand_over_overarm import ShadowHandOverOverarm
+from tasks.shadow_hand_lift_underarm import ShadowHandLiftUnderarm
+from tasks.shadow_hand_catch_over2underarm import ShadowHandCatchOver2Underarm
+from tasks.shadow_hand_door_close_inward import ShadowHandDoorCloseInward
+from tasks.shadow_hand_door_close_outward import ShadowHandDoorCloseOutward
+from tasks.shadow_hand_door_open_inward import ShadowHandDoorOpenInward
+from tasks.shadow_hand_door_open_outward import ShadowHandDoorOpenOutward
+from tasks.shadow_hand_bottle_cap import ShadowHandBottleCap
 
 from tasks.base.vec_task import VecTaskCPU, VecTaskGPU, VecTaskPython
 from tasks.base.multi_vec_task import MultiVecTaskPython

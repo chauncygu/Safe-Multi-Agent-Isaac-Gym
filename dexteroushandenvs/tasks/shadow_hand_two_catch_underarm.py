@@ -12,7 +12,7 @@ import random
 import torch
 
 from utils.torch_jit_utils import *
-from tasks.base.base_task import BaseTask
+from tasks.hand_base.base_task import BaseTask
 from isaacgym import gymtorch
 from isaacgym import gymapi
 
@@ -504,6 +504,27 @@ class ShadowHandTwoCatchUnderarm(BaseTask):
             if self.total_resets > 0:
                 print("Post-Reset average consecutive successes = {:.1f}".format(self.total_successes/self.total_resets))
 
+    def compute_cost(self):
+        actions = self.actions.clone()
+
+        self.cost_buf = torch.zeros(
+            self.num_envs, device=self.device, dtype=torch.float)
+
+        # if actions[:, :20] < -0.2:
+        #     self.cost = 1.0
+        # elif actions[:, :20] > 0.07:
+        #     self.cost = 1.0
+        self.cost_buf = torch.where(actions[:, 10] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 10] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+
+        self.cost_buf = torch.where(actions[:, 36] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 36] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+
+
+        # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400
+        # print("self.shadow_hand_dof_lower_limits:", self.shadow_hand_dof_lower_limits)
+        return self.cost_buf
+
     def compute_observations(self):
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)
@@ -768,10 +789,10 @@ class ShadowHandTwoCatchUnderarm(BaseTask):
             self.cur_targets[:, self.actuated_dof_indices + 24] = tensor_clamp(self.cur_targets[:, self.actuated_dof_indices + 24],
                                                                           self.shadow_hand_dof_lower_limits[self.actuated_dof_indices], self.shadow_hand_dof_upper_limits[self.actuated_dof_indices])
             
-            self.apply_forces[:, 1, :] = self.actions[:, 0:3] * 100000 * self.dt * self.transition_scale
-            self.apply_forces[:, 1 + 26, :] = self.actions[:, 26:29] * 100000 * self.dt * self.transition_scale
-            self.apply_torque[:, 1, :] = self.actions[:, 3:6] * 1000 * self.dt * self.orientation_scale
-            self.apply_torque[:, 1 + 26, :] = self.actions[:, 29:32] * 1000 * self.dt * self.orientation_scale       
+            self.apply_forces[:, 1, :] = self.actions[:, 0:3] * self.dt * self.transition_scale * 100000
+            self.apply_forces[:, 1 + 26, :] = self.actions[:, 26:29] * self.dt * self.transition_scale * 100000
+            self.apply_torque[:, 1, :] = self.actions[:, 3:6] * self.dt * self.orientation_scale * 1000
+            self.apply_torque[:, 1 + 26, :] = self.actions[:, 29:32] * self.dt * self.orientation_scale * 1000          
 
             self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(self.apply_forces), gymtorch.unwrap_tensor(self.apply_torque), gymapi.ENV_SPACE)
             

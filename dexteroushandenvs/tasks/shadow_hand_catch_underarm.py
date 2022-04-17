@@ -460,11 +460,11 @@ class ShadowHandCatchUnderarm(BaseTask):
         #     self.cost = 1.0
         # elif actions[:, :20] > 0.07:
         #     self.cost = 1.0
-        self.cost_buf = torch.where(actions[:, 4] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
-        self.cost_buf = torch.where(actions[:, 4] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 10] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 10] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
 
-        self.cost_buf = torch.where(actions[:, 4 + 24] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
-        self.cost_buf = torch.where(actions[:, 4 + 24] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 36] < -0.1, torch.ones_like(self.cost_buf), self.cost_buf)
+        self.cost_buf = torch.where(actions[:, 36] > 0.1, torch.ones_like(self.cost_buf), self.cost_buf)
 
 
         # cost = self.shadow_hand_dof_lower_limits[1] #-0.4890 # 0.1400

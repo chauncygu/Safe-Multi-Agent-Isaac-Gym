@@ -1,9 +1,9 @@
 # if given, will override the device setting in gym. 
 env: 
-  env_name: "shadow_hand_catch_abreast"
-  numEnvs: 256
-  envSpacing: 0.75
-  episodeLength: 150
+  env_name: "shadow_hand_door_open_outward"
+  numEnvs: 512
+  envSpacing: 1.5
+  episodeLength: 250
   enableDebugVis: False
   aggregateMode: 1
 
@@ -19,21 +19,21 @@ env:
 
   resetPositionNoise: 0.0
   resetRotationNoise: 0.0
-  resetDofPosRandomInterval: 0.
+  resetDofPosRandomInterval: 0.0
   resetDofVelRandomInterval: 0.0
 
-  distRewardScale: 50
+  distRewardScale: 20
   transition_scale: 0.5
-  orientation_scale: 1
+  orientation_scale: 0.5
   rotRewardScale: 1.0
   rotEps: 0.1
   actionPenaltyScale: -0.0002
   reachGoalBonus: 250
-  fallDistance: 0.65
+  fallDistance: 0.4
   fallPenalty: 0.0
 
-  objectType: "egg" # can be block, egg or pen
-  observationType: "full_state" # can be "openai", "full_no_vel", "full", "full_state"
+  objectType: "pot" # can be block, egg or pen
+  observationType: "full_state" # 
   handAgentIndex: "[[0, 1, 2, 3, 4, 5]]"
   asymmetric_observations: False
   successTolerance: 0.1
