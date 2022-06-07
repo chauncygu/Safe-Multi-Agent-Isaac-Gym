@@ -13,7 +13,7 @@ import random
 import torch
 
 from utils.torch_jit_utils import *
-from tasks.base.base_task import BaseTask
+from tasks.base.base_task import BaseTask # change hand_base as base
 from isaacgym import gymtorch
 from isaacgym import gymapi
 
