@@ -1,5 +1,40 @@
 # Safe Multi-Agent Isaac Gym Benchmark (Safe MAIG)
 
+Safe Multi-Agent Isaac Gym benchmark for safe multi-agent reinforcement learning research.
+
+***
+The README is organized as follows:
+
+- [About this repository](#about-this-repository)
+- [Installation](#installation)
+  * [Pre-requisites](#pre-requisites)
+  * [install this repo](#install-this-repo)
+- [Running the benchmarks](#running-the-benchmarks)
+- [Select an algorithm](#select-an-algorithm)
+- [Select tasks](#select-tasks)
+  * [HandOver Environments](#handover-environments)
+    + [<span id="obs1">Observation Space</span>](#-span-id--obs1--observation-space--span-)
+    + [<span id="action1">Action Space</span>](#-span-id--action1--action-space--span-)
+    + [<span id="r1">Rewards</span>](#-span-id--r1--rewards--span-)
+  * [HandCatchUnderarm Environments](#handcatchunderarm-environments)
+    + [<span id="obs2">Observation Space</span>](#-span-id--obs2--observation-space--span-)
+    + [<span id="action2">Action Space</span>](#-span-id--action2--action-space--span-)
+    + [<span id="r2">Rewards</span>](#-span-id--r2--rewards--span-)
+  * [HandCatchOver2Underarm Environments](#handcatchover2underarm-environments)
+    + [<span id="obs3">Observation Space</span>](#-span-id--obs3--observation-space--span-)
+    + [<span id="action3">Action Space</span>](#-span-id--action3--action-space--span-)
+    + [<span id="r3">Rewards</span>](#-span-id--r3--rewards--span-)
+  * [TwoObjectCatch Environments](#twoobjectcatch-environments)
+    + [<span id="obs4">Observation Space</span>](#-span-id--obs4--observation-space--span-)
+    + [<span id="action4">Action Space</span>](#-span-id--action4--action-space--span-)
+    + [<span id="r4">Rewards</span>](#-span-id--r4--rewards--span-)
+  * [HandCatchAbreast Environments](#handcatchabreast-environments)
+    + [<span id="obs5">Observation Space</span>](#-span-id--obs5--observation-space--span-)
+    + [<span id="action5">Action Space</span>](#-span-id--action5--action-space--span-)
+    + [<span id="r5">Rewards</span>](#-span-id--r5--rewards--span-)
+***
+
+
 ### About this repository
 
 This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/DexterousHands) which is from PKU MARL research team, Safe MAIG contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described in the NeurIPS 2021 Datasets and Benchmarks [paper.](https://openreview.net/forum?id=fgFBtYgJQX_)
@@ -57,13 +92,14 @@ Ensure that Isaac Gym works on your system by running one of the examples from t
 directory, like `joint_monkey.py`. Follow troubleshooting steps described in the Isaac Gym Preview 2 
 install instructions if you have any trouble running the samples.
 
+### install this repo
 Once Isaac Gym is installed and samples work within your current python environment, install this repo:
 
 ```bash
 pip install -e .
 ```
 
-### Running the benchmarks
+## Running the benchmarks
 
 To train your first policy, run this line:
 
@@ -71,7 +107,7 @@ To train your first policy, run this line:
 python train.py --task=ShadowHandOver --algo=macpo
 ```
 
-### Select an algorithm
+## Select an algorithm
 
 To select an algorithm, pass `--algo=ppo/mappo/happo/hatrpo` 
 as an argument:
@@ -92,7 +128,9 @@ as an argument:
 python train.py --task=ShadowHandOver --checkpoint=models/shadow_hand_over/ShadowHandOver.pth --test
 ``` -->
 
-## <span id="task">Tasks</span>
+<!--## <span id="task">Tasks</span>-->
+
+## Select tasks
 
 Source code for tasks can be found in `dexteroushandenvs/tasks`. 
 
