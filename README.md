@@ -1,6 +1,6 @@
 # Safe Multi-Agent Isaac Gym Benchmark (Safe MAIG)
 
-Safe Multi-Agent Isaac Gym benchmark for safe multi-agent reinforcement learning research.
+Safe Multi-Agent Isaac Gym benchmark is for safe multi-agent reinforcement learning research.
 
 ***
 The README is organized as follows:
