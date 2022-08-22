@@ -2,6 +2,13 @@
 
 Safe Multi-Agent Isaac Gym benchmark is for safe multi-agent reinforcement learning research.
 
+<div align=center>
+ <img src="https://github.com/chauncygu/Safe-Multi-Agent-Isaac-Gym/blob/main/assets/image_folder/all-demos.gif" width="550"/> 
+ </div>
+<div align=center>
+<center style="color:#000000;text-decoration:underline"> Safe multi-agent Isaac Gym demos. </center>
+ </div>
+
 ***
 The README is organized as follows:
 
