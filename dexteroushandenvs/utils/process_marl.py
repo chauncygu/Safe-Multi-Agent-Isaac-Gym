@@ -12,27 +12,19 @@ def process_MultiAgentRL(args,env, config, model_dir=""):
     config["n_rollout_threads"] = env.num_envs
     config["n_eval_rollout_threads"] = env.num_envs
 
-    if args.algo in ["mappo", "happo", "hatrpo", "ippo"]:
+    if args.algo in ["mappo", "happo", "ippo"]:
         # on policy marl
         from algorithms.algorithms.runner import Runner
         marl = Runner(vec_env=env,
                     config=config,
                     model_dir=model_dir
                     )
-    if args.algo in ["macpo", "happolag"]:
+    if args.algo in ["macpo", "mappolag"]:
         # safe rl
         from algorithms.algorithms.runner_macpo import Runner
         marl = Runner(vec_env=env,
                     config=config,
                     model_dir=model_dir
                     )
-
-    elif args.algo == 'maddpg':
-        # off policy marl
-        from algorithms.maddpg.runner import Runner
-        marl = Runner(vec_env=env,
-            config=config,
-            model_dir=model_dir
-            )
 
     return marl
