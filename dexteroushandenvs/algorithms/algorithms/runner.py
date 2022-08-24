@@ -74,9 +74,9 @@ class Runner:
         if self.algorithm_name == "happo":
             from algorithms.algorithms.happo_trainer import HAPPO as TrainAlgo
             from algorithms.algorithms.happo_policy import HAPPO_Policy as Policy
-        if self.algorithm_name == "hatrpo":
-            from algorithms.algorithms.hatrpo_trainer import HATRPO as TrainAlgo
-            from algorithms.algorithms.hatrpo_policy import HATRPO_Policy as Policy
+        if self.algorithm_name == "mappolag":
+            from algorithms.algorithms.mappolag_trainer import R_MAPPO_Lagr as TrainAlgo
+            from algorithms.algorithms.mappolag_policy import MAPPO_L_Policy as Policy
         if self.algorithm_name == "mappo":
             from algorithms.algorithms.mappo_trainer import MAPPO as TrainAlgo
             from algorithms.algorithms.mappo_policy import MAPPO_Policy as Policy
