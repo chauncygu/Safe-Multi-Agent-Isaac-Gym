@@ -26,7 +26,7 @@ def train():
     agent_index = [[[0, 1, 2, 3, 4, 5]],
                    [[0, 1, 2, 3, 4, 5]]]
 
-    if args.algo in ["mappo", "happo","ippo", "macpo", "happolag"]: 
+    if args.algo in ["mappo", "happo","ippo", "macpo", "mappolag"]: 
         # maddpg exists a bug now 
         args.task_type = "MultiAgent"
 
@@ -42,7 +42,7 @@ def train():
     
 
     else:
-        print("Unrecognized algorithm!\nAlgorithm should be one of: [happo, hatrpo, mappo,ippo,maddpg,sac,td3,trpo,ppo,ddpg]")
+        print("Unrecognized algorithm!\nAlgorithm should be one of: [mappo, happo, ippo, macpo, mappolag]")
 
 
 if __name__ == '__main__':
