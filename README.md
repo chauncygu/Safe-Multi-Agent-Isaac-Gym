@@ -94,7 +94,11 @@ chmod +x ./run_experiments.sh
 ./run_experiments.sh
 ```
 
-If you want to turn off the video, set headless as True
+If you want to turn off the video, set headless as True, e.g., 
+
+```bash
+python train.py --task=ShadowHandOver --algo=macpo --headless=True
+```
 
 
 
