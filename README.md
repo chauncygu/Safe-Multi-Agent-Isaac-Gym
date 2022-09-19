@@ -55,33 +55,7 @@ This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/
 <center style="color:#000000;text-decoration:underline">Figure.1 Safe multi-agent Isaac Gym environments. Body parts of different colours of robots are controlled by different agents in each pair of hands. Agents jointly learn to manipulate the robot, while avoiding violating the safety constraints. </center>
  </div>
 
-<!--
 
-:star2::star2:**直接点击[这里](#task)查看环境介绍！**:star2::star2:  
-:star::star:**现在每天都会更新，使用之前可以先pull一下防止出现无法运行等bug**:star::star:
-
-Version 0.0.3: 
-现在的视觉效果非常酷炫!:stuck_out_tongue_winking_eye:运行效率也得到了大大优化!:laughing:
-1. 新加并测试了ShadowHandCatchAbreast环境.
-2. 把多智能体细化到手指, 给加上了颜色分明的颜色，同一个智能体采用相同颜色, 一目了然.
-3. 添加了支持不同智能体对应不同action dim的功能.
-4. 添加了类似tianshou的plotter，可以将数据保存为csv文件并画图。添加了read the docs格式的文档，暂时存在docs文件夹里.
-5. 为了适配isaacgym，将数据操作全在tensor(gpu)上完成，不需要经过cpu，极大提升速度:fire::fire:（现在已经是原来的大约20倍收敛速度了，而且还有优化空间）（现在半小时就能训练好一个环境）.
-6. 添加了大量算法进库里，包括SAC，TD3，DDPG，TRPO，IPPO.
-
-Version 0.0.2: 
-现在已经全面支持Isaac-gym preview release 3了！并且不再支持Isaac-gym preview release 2.  
-1. 在下面的[Task](#task)栏中添加了对环境的详细描述以及动图/截图.
-2. 在参数文件中添加了transition和orientation scale，可以调整shadow hand移动和转动的速度.
-3. 修复了另一只手没有scale的bug，修复了TwoObject环境另一个object的reset判定，现在基本没有系统性bug了.
-
-Version 0.0.1: 由于硬件关系，现在只支持Isaac-gym preview release 2版本，可以在官网找到该版本。下面是一些使用方法:
-1. 目前总共有4个dexteroushand环境，加上三个不同物体，详细说明和运行方法在下面。需要切换物体去该环境对应config`dexteroushandenvs/cfg/shadow_hand_over.yaml`中修改即可。
-2. 目前支持的算法有PPO，MAPPO，HAPPO，HATRPO，需要调整算法可以去`dexteroushandenvs/algorithms/algorithms`，算法参数文件在`dexteroushandenvs/cfg`。
-3. 暂时推荐使用ShadowHandOver环境进行调试，我们的测试已经证明该环境可以被成功训练，其他环境还暂时没有测试。
-4. 环境的接口可以在`dexteroushandenvs/tasks/base/multi_vec_task.py`找到，里面可以自定义获取所有该环境的信息。 
-5. 由于开发时间还比较短，难免会有许多bug:worried:，欢迎大家找我修改或提出建议:heart_eyes:。
--->
 
 ## Installation
 
@@ -113,6 +87,13 @@ To train your first policy, run this line:
 ```bash
 python train.py --task=ShadowHandOver --algo=macpo
 ```
+Or training, run the lines:
+
+```bash
+chmod +x ./run_experiments.sh
+./run_experiments.sh
+```
+
 
 ## Select an algorithm
 
