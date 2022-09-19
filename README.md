@@ -94,6 +94,9 @@ chmod +x ./run_experiments.sh
 ./run_experiments.sh
 ```
 
+If you want to turn off the video, set headless as True
+
+
 
 ## Select an algorithm
 
