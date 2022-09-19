@@ -87,7 +87,7 @@ To train your first policy, run this line:
 ```bash
 python train.py --task=ShadowHandOver --algo=macpo
 ```
-Or training, run the lines:
+Or run the lines:
 
 ```bash
 chmod +x ./run_experiments.sh
