@@ -44,7 +44,7 @@ The README is organized as follows:
 
 ### About this repository
 
-This repository is an extention of [DexterousHands](https://github.com/PKU-MARL/DexterousHands) which is from PKU MARL research team, Safe MAIG contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high performance environments described in the NeurIPS 2021 Datasets and Benchmarks [paper.](https://openreview.net/forum?id=fgFBtYgJQX_)
+This repository is an extension of [DexterousHands](https://github.com/PKU-MARL/DexterousHands) which is from PKU MARL research team, Safe MAIG contains complex dexterous hand RL environments for the NVIDIA Isaac Gym high-performance environments described in the NeurIPS 2021 Datasets and Benchmarks [paper.](https://openreview.net/forum?id=fgFBtYgJQX_)
 
 :star2: This repository is under actively development. We appreciate any constructive comments and suggestions. If you have any questions, please feel free to email <gshangd[AT]foxmail.com>.
 
